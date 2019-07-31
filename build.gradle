@@ -1,0 +1,122 @@
+plugins {
+    id "org.sonarqube" version "2.6.1"
+    id "io.codearte.nexus-staging" version "0.11.0"
+}
+
+apply plugin: 'java'
+apply plugin: 'maven'
+
+dependencies {
+    implementation "com.nativelibs4java:bridj:${project.property('bridj.version')}"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${project.property('junit.version')}"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${project.property('junit.version')}"
+    testImplementation "org.mockito:mockito-junit-jupiter:${project.property('mockito.version')}"
+}
+
+compileJava {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+compileTestJava {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+test {
+    enabled = true
+    useJUnitPlatform()
+    systemProperty 'jna.debug', 'true'
+    testLogging {
+        events 'PASSED', 'FAILED', 'SKIPPED'
+    }
+    afterSuite { desc, result ->
+        if (!desc.parent) {
+            println "\nTest result: ${result.resultType}"
+            println "Test summary: ${result.testCount} test, " +
+                    "${result.successfulTestCount} succeeded, " +
+                    "${result.failedTestCount} failed " +
+                    "${result.skippedTestCount} skipped "
+        }
+    }
+}
+
+task javadocJar(type: Jar, dependsOn: classes) {
+    from javadoc
+    into "build/tmp"
+    classifier 'javadoc'
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    from sourceSets.main.allSource
+    into "build/tmp"
+    classifier 'sources'
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+ext {
+    user = 'jprante'
+    projectDescription = 'Systemd journal bindings'
+    scmUrl = 'https://github.com/jprante/systemd-journal'
+    scmConnection = 'scm:git:git://github.com/jprante/systemd-journal.git'
+    scmDeveloperConnection = 'scm:git:git://github.com/jprante/systemd-journal.git'
+}
+
+task sonaTypeUpload(type: Upload) {
+    group = 'publish'
+    configuration = configurations.archives
+    uploadDescriptor = true
+    repositories {
+        if (project.hasProperty('ossrhUsername')) {
+            mavenDeployer {
+                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+                repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2') {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
+                snapshotRepository(url: 'https://oss.sonatype.org/content/repositories/snapshots') {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
+                pom.project {
+                    groupId project.group
+                    artifactId project.name
+                    version project.version
+                    name project.name
+                    description description
+                    packaging 'jar'
+                    inceptionYear '2018'
+                    url scmUrl
+                    organization {
+                        name 'xbib'
+                        url 'http://xbib.org'
+                    }
+                    developers {
+                        developer {
+                            id user
+                            name 'Jörg Prante'
+                            email 'joergprante@gmail.com'
+                            url 'https://github.com/jprante'
+                        }
+                    }
+                    scm {
+                        url scmUrl
+                        connection scmConnection
+                        developerConnection scmDeveloperConnection
+                    }
+                    licenses {
+                        license {
+                            name 'The Apache License, Version 2.0'
+                            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+nexusStaging {
+    packageGroup = "org.xbib"
+}
