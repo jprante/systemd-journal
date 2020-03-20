@@ -416,11 +416,6 @@ public class DefaultJournalEntry implements JournalEntry {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("priority=")
-                .append(this.priority)
-                .append(",message=")
-                .append(this.message);
-        return sb.toString();
+        return "priority=" + this.priority + ",message=" + this.message;
     }
 }

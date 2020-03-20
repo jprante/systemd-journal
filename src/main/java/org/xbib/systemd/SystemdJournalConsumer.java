@@ -102,7 +102,6 @@ public class SystemdJournalConsumer implements Runnable {
     private JournalEntry makeEntry(List<String> list) {
         DefaultJournalEntry journalEntry = new DefaultJournalEntry();
         for (String string : list) {
-            logger.log(Level.INFO, "entry: " + string);
             if (string.startsWith("MESSAGE=")) {
                 journalEntry.setMessage(string.substring(8));
                 continue;
@@ -197,9 +196,7 @@ public class SystemdJournalConsumer implements Runnable {
             }
             if (string.startsWith("_SYSTEMD_USER_UNIT=")) {
                 journalEntry.setSystemdUserUnit(string.substring(18));
-                continue;
             }
-
         }
         return journalEntry;
     }
