@@ -3,7 +3,6 @@
 [![Build Status](https://travis-ci.org/jprante/systemd-journal-appender.png?branch=master)](https://travis-ci.org/jprante/systemd-journal)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.xbib/log4j-systemd-journal/badge.svg)](http://maven-badges.herokuapp.com/maven-central/org.xbib/log4j-systemd-journal)
 [![Apache License](https://img.shields.io/github/license/jprante/log4j-systemd-journal.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/JoergPrante)
 
 ## Reading systemd-journal from Java
 
@@ -11,7 +10,14 @@ Please see the junit test file to find out how to consume systemd journal from J
 
 The implementation use bridj.
 
+The work is based on https://github.com/bartlinga/systemd-journal which is unreleased.
+
 ## Log4j2 systemd-journal appender
+
+This is a modified version of https://github.com/bwaldvogel/log4j-systemd-journal-appender 
+where all the warm applause and admiration should go to.
+
+The documentation is reproduced here for reference.
 
 This [Log4j][log4j] appender logs event meta data such as timestamp, logger name, exception stacktrace, 
 [ThreadContext (MDC)][thread-context] or the thread name to [fields][systemd-journal-fields] 
@@ -147,11 +153,13 @@ You can use the power of [systemd journal][systemd-journal] to filter for intere
 
 `journalctl CODE_FUNC=testMessageWithMDC THREAD_NAME=main` will only show messages that are logged from the Java main thread in a method called `testMessageWithMDC`.
 
-## Bridj or JNA
+## Bridj or JNA?
 
-As you noted, I use both bridj and JNA. But only one is necessary. The only reason for this is that it works. 
+As you noted, I use both bridj and JNA. But only one is necessary. 
 
-bridj looks easier and more powerful, but is getting old. I am considering a fork of bridj and implement a log4j2 appender for bridj, or porting the API methods `sd_journal_open`, `sd_journal_add_match`, etc.  to JNA.
+The only reason for this is that it works. 
+
+Bridj looks easier and more powerful, but is getting old. I am considering a fork of bridj and implement a log4j2 appender based on bridj, or porting the API methods `sd_journal_open`, `sd_journal_add_match`, etc.  to JNA.
 
 Feel free to submit patches.
 

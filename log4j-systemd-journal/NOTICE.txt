@@ -1,0 +1,1 @@
+Modified version of https://github.com/bwaldvogel/log4j-systemd-journal-appender
