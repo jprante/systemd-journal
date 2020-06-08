@@ -1,0 +1,2 @@
+include 'systemd-journal'
+include 'log4j-systemd-journal'

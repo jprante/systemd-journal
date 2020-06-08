@@ -1,0 +1,8 @@
+
+version = "${project.property('log4j.version')}.0"
+
+dependencies {
+    implementation "net.java.dev.jna:jna:${project.property('jna.version')}"
+    implementation "org.apache.logging.log4j:log4j-core:${project.property('log4j.version')}"
+    testImplementation "org.mockito:mockito-junit-jupiter:${project.property('mockito.version')}"
+}

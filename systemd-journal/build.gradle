@@ -1,0 +1,5 @@
+
+dependencies {
+    implementation "com.nativelibs4java:bridj:${project.property('bridj.version')}"
+    testImplementation "org.mockito:mockito-junit-jupiter:${project.property('mockito.version')}"
+}
