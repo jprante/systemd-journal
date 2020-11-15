@@ -1,0 +1,4 @@
+dependencies {
+    implementation "net.java.dev.jna:jna:${project.property('jna.version')}"
+    testImplementation "org.mockito:mockito-junit-jupiter:${project.property('mockito.version')}"
+}
