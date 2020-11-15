@@ -46,39 +46,47 @@ public class SystemdJournalConsumer implements Runnable {
 
     private void loop() throws IOException {
         SystemdLibraryAPI api = SystemdLibraryAPI.getInstance();
-        SdJournal sdJournal = new SdJournal() {
-            @Override
-            public int hashCode() {
-                return super.hashCode();
-            }
-        };
+        SdJournal sdJournal = new SdJournal();
+        logger.log(Level.INFO, "opening");
         int rc = api.sd_journal_open(sdJournal, SD_JOURNAL_LOCAL_ONLY);
-        if (rc < 0) {
+        logger.log(Level.INFO, "open: " + rc);
+        if (rc != 0) {
             logger.log(Level.WARNING, "error opening journal for read: " + rc);
+            return;
         }
         if (match != null) {
             rc = api.sd_journal_add_match(sdJournal, match, match.length());
-            if (rc < 0) {
+            logger.log(Level.INFO, "add_match: " + rc);
+            if (rc != 0) {
                 logger.log(Level.WARNING, "error in add_match: " + rc);
+                return;
             }
         }
         rc = api.sd_journal_get_fd(sdJournal);
+        logger.log(Level.INFO, "get_fd: " + rc);
         rc = api.sd_journal_seek_tail(sdJournal);
+        logger.log(Level.INFO, "seek_tail: " + rc);
         rc = api.sd_journal_previous(sdJournal);
+        logger.log(Level.INFO, "previous: " + rc);
         rc = api.sd_journal_next(sdJournal);
+        logger.log(Level.INFO, "next: " + rc);
         String[] strings = new String[1];
         StringArray cursor = new StringArray(strings);
-        api.sd_journal_get_cursor(sdJournal, cursor);
+        rc = api.sd_journal_get_cursor(sdJournal, cursor);
+        logger.log(Level.INFO, "get_cursor: " + rc);
         while (true) {
             do {
                 rc = api.sd_journal_wait(sdJournal, -1);
+                logger.log(Level.INFO, "wait: " + rc);
             } while (rc == 0); // NOP
-            while (api.sd_journal_next(sdJournal) > 0) {
+            while ((rc = api.sd_journal_next(sdJournal)) > 0) {
+                logger.log(Level.INFO, "next: " + rc);
                 if (field != null) {
                     Pointer dataPointer = new Memory(Native.POINTER_SIZE);
                     Pointer sizePointer = new Memory(Native.POINTER_SIZE);
                     rc = api.sd_journal_get_data(sdJournal, field, dataPointer, sizePointer);
-                    if (rc < 0) {
+                    logger.log(Level.INFO, "get_data: " + rc);
+                    if (rc != 0) {
                         throw new IOException("error in get_data: " + rc);
                     }
                     int size = sizePointer.getInt(0);
@@ -90,21 +98,22 @@ public class SystemdJournalConsumer implements Runnable {
                 } else {
                     String[] strings2 = new String[1];
                     StringArray nextCursor = new StringArray(strings2);
-                    api.sd_journal_get_cursor(sdJournal, nextCursor);
+                    rc = api.sd_journal_get_cursor(sdJournal, nextCursor);
+                    logger.log(Level.INFO, "get_cursor: " + rc);
                     if (!cursor.getString(0).equals(nextCursor.getString(0))) {
                         cursor = nextCursor;
                         Pointer dataPointer = new Memory(Native.POINTER_SIZE);
                         Pointer sizePointer = new Memory(Native.POINTER_SIZE);
                         List<String> list = new ArrayList<>();
-                        while (api.sd_journal_enumerate_data(sdJournal, dataPointer, sizePointer) > 0) {
-                            //Pointer<Byte> data = dataPointer.as(Byte.class);
-                            //String line = data.getPointer(Byte.class).getCString();
+                        while ((rc = api.sd_journal_enumerate_data(sdJournal, dataPointer, sizePointer)) > 0) {
+                            logger.log(Level.INFO, "enumerate_data: " + rc);
                             int size = sizePointer.getInt(0);
                             byte[] b = dataPointer.getByteArray(0, size);
                             String s = new String(b, StandardCharsets.UTF_8);
                             list.add(s);
                         }
                         rc = api.sd_journal_restart_data(sdJournal);
+                        logger.log(Level.INFO, "restart_data: " + rc);
                         if (listener != null) {
                             listener.handleEntry(makeEntry(list));
                         }

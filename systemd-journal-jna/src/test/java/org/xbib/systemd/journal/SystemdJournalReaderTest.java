@@ -20,15 +20,12 @@ public class SystemdJournalReaderTest {
 
     private static final Logger logger = Logger.getLogger(SystemdJournalReaderTest.class.getName());
 
-    @Mock
-    private SystemdLibraryAPI api;
-
     @Test
     void testConsumer() throws InterruptedException {
         SystemdJournalConsumer consumer = new SystemdJournalConsumer(null,
                 entry -> logger.log(Level.INFO, entry.toString()));
         Executors.newSingleThreadExecutor().submit(consumer);
         //  consuming for some seconds
-        Thread.sleep(10000L);
+        Thread.sleep(60000L);
     }
 }
