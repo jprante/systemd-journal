@@ -3,6 +3,7 @@ package org.xbib.systemd.journal;
 import com.sun.jna.Library;
 import com.sun.jna.Pointer;
 import com.sun.jna.StringArray;
+import com.sun.jna.Structure;
 
 public interface SystemdLibrary extends Library {
 
@@ -29,4 +30,11 @@ public interface SystemdLibrary extends Library {
     int sd_journal_enumerate_data(SdJournal sdJournal, Pointer data, Pointer length);
 
     int sd_journal_restart_data(SdJournal sdJournal);
+
+    class SdJournal extends Structure {
+        public int top_level_fd;
+        public String path;
+        public String prefix;
+        public String namespace;
+    }
 }

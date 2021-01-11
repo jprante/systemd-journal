@@ -11,17 +11,17 @@ import java.util.List;
  *
  * The native library is loaded only once, so this class is a singleton.
  */
-public class SystemdLibraryAPI {
+public class SystemdLibraryInstance {
 
-    private static final SystemdLibraryAPI instance = new SystemdLibraryAPI();
+    private static final SystemdLibraryInstance instance = new SystemdLibraryInstance();
 
     private final SystemdLibrary systemdLibrary;
 
-    private SystemdLibraryAPI() {
+    private SystemdLibraryInstance() {
         this.systemdLibrary = loadLibrary();
     }
 
-    public static SystemdLibraryAPI getInstance() {
+    public static SystemdLibraryInstance getInstance() {
         return instance;
     }
 
@@ -49,47 +49,47 @@ public class SystemdLibraryAPI {
         return systemdLibrary.sd_journal_send(format, args.toArray());
     }
 
-    public int sd_journal_open(SdJournal sdJournal, int flag) {
+    public int sd_journal_open(SystemdLibrary.SdJournal sdJournal, int flag) {
         return systemdLibrary.sd_journal_open(sdJournal, flag);
     }
 
-    public int sd_journal_get_fd(SdJournal sdJournal) {
+    public int sd_journal_get_fd(SystemdLibrary.SdJournal sdJournal) {
         return systemdLibrary.sd_journal_get_fd(sdJournal);
     }
 
-    public int sd_journal_seek_tail(SdJournal sdJournal) {
+    public int sd_journal_seek_tail(SystemdLibrary.SdJournal sdJournal) {
         return systemdLibrary.sd_journal_seek_tail(sdJournal);
     }
 
-    public int sd_journal_previous(SdJournal sdJournal) {
+    public int sd_journal_previous(SystemdLibrary.SdJournal sdJournal) {
         return systemdLibrary.sd_journal_previous(sdJournal);
     }
 
-    public int sd_journal_next(SdJournal sdJournal) {
+    public int sd_journal_next(SystemdLibrary.SdJournal sdJournal) {
         return systemdLibrary.sd_journal_next(sdJournal);
     }
 
-    public int sd_journal_get_cursor(SdJournal sdJournal, StringArray cursor) {
+    public int sd_journal_get_cursor(SystemdLibrary.SdJournal sdJournal, StringArray cursor) {
         return systemdLibrary.sd_journal_get_cursor(sdJournal, cursor);
     }
 
-    public int sd_journal_add_match(SdJournal sdJournal, String match, int len) {
+    public int sd_journal_add_match(SystemdLibrary.SdJournal sdJournal, String match, int len) {
         return systemdLibrary.sd_journal_add_match(sdJournal, match, len);
     }
 
-    public int sd_journal_wait(SdJournal sdJournal, long timeout_musec) {
+    public int sd_journal_wait(SystemdLibrary.SdJournal sdJournal, long timeout_musec) {
         return systemdLibrary.sd_journal_wait(sdJournal, timeout_musec);
     }
 
-    public int sd_journal_get_data(SdJournal sdJournal, String field, Pointer data, Pointer length) {
+    public int sd_journal_get_data(SystemdLibrary.SdJournal sdJournal, String field, Pointer data, Pointer length) {
         return systemdLibrary.sd_journal_get_data(sdJournal, field, data, length);
     }
 
-    public int sd_journal_enumerate_data(SdJournal sdJournal, Pointer data, Pointer length) {
+    public int sd_journal_enumerate_data(SystemdLibrary.SdJournal sdJournal, Pointer data, Pointer length) {
         return systemdLibrary.sd_journal_enumerate_data(sdJournal, data, length);
     }
 
-    public int sd_journal_restart_data(SdJournal sdJournal) {
+    public int sd_journal_restart_data(SystemdLibrary.SdJournal sdJournal) {
         return systemdLibrary.sd_journal_restart_data(sdJournal);
     }
 

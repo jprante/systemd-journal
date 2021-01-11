@@ -19,6 +19,6 @@ class SystemdJournalReaderTest {
                 entry -> logger.log(Level.INFO, entry.toString()));
         Executors.newSingleThreadExecutor().submit(consumer);
         //  consuming for some seconds
-        Thread.sleep(10000L);
+        Thread.sleep(60000L);
     }
 }

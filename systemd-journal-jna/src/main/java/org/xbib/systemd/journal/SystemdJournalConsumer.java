@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static org.xbib.systemd.journal.SystemdLibraryAPI.SD_JOURNAL_LOCAL_ONLY;
+import static org.xbib.systemd.journal.SystemdLibraryInstance.SD_JOURNAL_LOCAL_ONLY;
 
 public class SystemdJournalConsumer implements Runnable {
 
@@ -45,8 +45,8 @@ public class SystemdJournalConsumer implements Runnable {
     }
 
     private void loop() throws IOException {
-        SystemdLibraryAPI api = SystemdLibraryAPI.getInstance();
-        SdJournal sdJournal = new SdJournal();
+        SystemdLibraryInstance api = SystemdLibraryInstance.getInstance();
+        SystemdLibrary.SdJournal sdJournal = new SystemdLibrary.SdJournal();
         logger.log(Level.INFO, "opening");
         int rc = api.sd_journal_open(sdJournal, SD_JOURNAL_LOCAL_ONLY);
         logger.log(Level.INFO, "open: " + rc);

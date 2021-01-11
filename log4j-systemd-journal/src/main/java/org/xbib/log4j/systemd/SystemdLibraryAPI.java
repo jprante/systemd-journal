@@ -2,6 +2,8 @@ package org.xbib.log4j.systemd;
 
 import com.sun.jna.Native;
 
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.List;
 
 /**
@@ -33,7 +35,7 @@ public class SystemdLibraryAPI {
 
     private static SystemdLibrary loadLibrary() {
         try {
-            return Native.load("systemd", SystemdLibrary.class);
+            return (SystemdLibrary) AccessController.doPrivileged((PrivilegedAction<Object>) () -> Native.load("systemd", SystemdLibrary.class));
         } catch (UnsatisfiedLinkError e) {
             throw new RuntimeException("Failed to load systemd library." +
                     " Please note that JNA requires an executable temporary folder." +
